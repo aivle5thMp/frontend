@@ -1,0 +1,174 @@
+.header {
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 80px;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.menu-icon span {
+  width: 18px;
+  height: 2px;
+  background-color: #333;
+  transition: all 0.3s ease;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+  color: #007bff;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.logo-text {
+  color: #333;
+}
+
+.logo-version {
+  background: linear-gradient(135deg, #00c851, #007bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 300px;
+  height: 40px;
+  padding: 0 50px 0 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+}
+
+.search-button {
+  position: absolute;
+  right: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-button:hover {
+  color: #007bff;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.login-btn, .signup-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
+}
+
+.signup-btn {
+  background-color: transparent;
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.signup-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+  
+  .search-input {
+    width: 200px;
+  }
+  
+  .auth-buttons {
+    gap: 5px;
+  }
+  
+  .login-btn, .signup-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+} 
