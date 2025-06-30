@@ -1,0 +1,221 @@
+.author-apply-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.form-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  animation: slideUp 0.5s ease-out;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-header h1 {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.form-header p {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.author-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  background: #fee;
+  color: #c53030;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 4px solid #fc8181;
+  font-size: 0.9rem;
+}
+
+.success-message,
+.status-message {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  animation: slideUp 0.5s ease-out;
+}
+
+.success-icon,
+.status-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.success-message h2,
+.status-message h2 {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+}
+
+.success-message p,
+.status-message p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 10px 0;
+}
+
+.success-note,
+.status-note {
+  color: #888 !important;
+  font-size: 0.85rem !important;
+  font-style: italic;
+}
+
+.status-message.pending {
+  border-left: 4px solid #f6ad55;
+}
+
+.status-message.rejected {
+  border-left: 4px solid #fc8181;
+}
+
+.reapply-button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.reapply-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.form-note {
+  color: #888;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .author-apply-page {
+    padding: 10px;
+  }
+  
+  .form-container,
+  .success-message,
+  .status-message {
+    padding: 30px 20px;
+    max-width: 100%;
+  }
+  
+  .form-header h1 {
+    font-size: 1.5rem;
+  }
+} 

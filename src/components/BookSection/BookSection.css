@@ -1,0 +1,159 @@
+.book-section {
+  padding: 60px 0 80px 0;
+  background: #f8f9fa;
+  overflow: visible;
+}
+
+.section-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  overflow: visible;
+}
+
+.section-header {
+  text-align: left;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* 카테고리 탭 */
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.category-tab {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.category-tab:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.category-tab.active {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: white;
+  font-weight: 600;
+}
+
+/* 책 그리드 */
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+  padding: 20px 20px 40px 20px;
+  overflow: visible;
+}
+
+.book-grid-item {
+  overflow: visible;
+  padding: 10px 0;
+  transition: transform 0.3s ease;
+}
+
+.book-grid-item:hover {
+  transform: translateY(-5px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .section-container {
+    padding: 0 30px;
+  }
+  
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+  }
+  
+  .category-tabs {
+    gap: 6px;
+  }
+  
+  .category-tab {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .book-section {
+    padding: 40px 0 60px 0;
+  }
+  
+  .section-container {
+    padding: 0 20px;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    padding: 0 10px;
+  }
+  
+  .category-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  
+  .category-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .category-tabs::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .category-tabs::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    padding: 0 5px;
+  }
+  
+  .category-tab {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+} 

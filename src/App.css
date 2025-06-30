@@ -24,12 +24,15 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .main-content {
   flex: 1;
   padding-top: 80px; /* Header height */
   min-height: calc(100vh - 80px);
+  overflow: visible;
 }
 
 /* Smooth scrolling */
