@@ -7,8 +7,6 @@ interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
-  // updateProfile: (updates: Partial<Pick<User, 'name' | 'email'>>) => Promise<void>;
-  // changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -18,8 +16,7 @@ type AuthAction =
   | { type: 'AUTH_SUCCESS'; payload: User }
   | { type: 'AUTH_FAILURE'; payload: string }
   | { type: 'AUTH_LOGOUT' }
-  | { type: 'CLEAR_ERROR' }
-  | { type: 'UPDATE_USER'; payload: User };
+  | { type: 'CLEAR_ERROR' };
 
 // Auth Reducer
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -53,12 +50,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         isAuthenticated: false,
         isLoading: false,
         error: null,
-      };
-
-    case 'UPDATE_USER':
-      return {
-        ...state,
-        user: action.payload,
       };
 
     case 'CLEAR_ERROR':
@@ -95,12 +86,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // 초기 인증 상태 확인
   useEffect(() => {
     const initializeAuth = async () => {
-      const user = authService.getUser();
-      const token = authService.getAccessToken();
-      
-      if (user && token && !authService.isTokenExpired()) {
-        dispatch({ type: 'AUTH_SUCCESS', payload: user });
-        authService.setupApiToken();
+      if (authService.isAuthenticated()) {
+        const user = authService.getUser();
+        if (user) {
+          dispatch({ type: 'AUTH_SUCCESS', payload: user });
+        }
       } else {
         authService.clearAuthData();
         dispatch({ type: 'AUTH_LOGOUT' });
@@ -117,7 +107,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await authService.login(credentials);
       dispatch({ type: 'AUTH_SUCCESS', payload: response.user });
-      authService.setupApiToken();
     } catch (error: any) {
       dispatch({ type: 'AUTH_FAILURE', payload: error.message });
       throw error;
@@ -144,27 +133,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     dispatch({ type: 'AUTH_LOGOUT' });
   };
 
-  // 프로필 업데이트
-//   const updateProfile = async (updates: Partial<Pick<User, 'name' | 'email'>>): Promise<void> => {
-//     try {
-//       const updatedUser = await authService.updateProfile(updates);
-//       dispatch({ type: 'UPDATE_USER', payload: updatedUser });
-//     } catch (error: any) {
-//       dispatch({ type: 'AUTH_FAILURE', payload: error.message });
-//       throw error;
-//     }
-//   };
-
-  // 비밀번호 변경
-//   const changePassword = async (currentPassword: string, newPassword: string): Promise<void> => {
-//     try {
-//       await authService.changePassword(currentPassword, newPassword);
-//     } catch (error: any) {
-//       dispatch({ type: 'AUTH_FAILURE', payload: error.message });
-//       throw error;
-//     }
-//   };
-
   // 에러 정리
   const clearError = (): void => {
     dispatch({ type: 'CLEAR_ERROR' });
@@ -175,8 +143,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    // updateProfile,
-    // changePassword,
     clearError,
   };
 

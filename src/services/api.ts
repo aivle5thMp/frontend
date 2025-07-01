@@ -1,8 +1,8 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import type { ApiResponse, ApiError } from '../types/auth';
+import type { ApiError } from '../types/auth';
 
 // API 기본 설정
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'; // 테스트용: 'http://your-test-server:8080'
 
 class ApiService {
   private axiosInstance: AxiosInstance;

@@ -1,4 +1,5 @@
-import { authorApiService } from './apis/authorApi';
+import apiService from './api';
+import axios from 'axios';
 
 interface AuthorApplicationData {
   name: string;
@@ -14,6 +15,8 @@ interface ApplicationResponse {
 }
 
 class AuthorService {
+  private authorApiUrl = 'http://localhost:8081'; // Authors API 포트
+
   /**
    * 작가 신청 API
    * @param data 작가 신청 데이터
@@ -21,10 +24,11 @@ class AuthorService {
    */
   async applyForAuthor(data: AuthorApplicationData): Promise<ApplicationResponse> {
     try {
-      const response = await authorApiService.post<{ data: ApplicationResponse }>('/authors/apply', data);
+      const response = await apiService.post<{ data: ApplicationResponse }>('/authors/apply', data, {
+        baseURL: this.authorApiUrl
+      });
       return response.data;
     } catch (error: any) {
-      // authorApiService에서 이미 에러 처리를 했지만, 더 구체적인 메시지 제공
       if (error.code === 400) {
         throw new Error('잘못된 요청입니다. 입력 내용을 확인해주세요.');
       } else if (error.code === 409) {
@@ -38,16 +42,21 @@ class AuthorService {
 
   /**
    * 작가 신청 상태 확인 API
-   * @param userId 사용자 ID (선택사항 - 토큰에서 추출 가능한 경우)
    * @returns API 응답
    */
-  async checkApplicationStatus(userId?: string): Promise<ApplicationResponse | null> {
+  async checkApplicationStatus(): Promise<ApplicationResponse | null> {
     try {
-      const url = userId 
-        ? `/authors/application-status/${userId}` 
-        : '/authors/application-status';
-      
-      const response = await authorApiService.get<{ data: ApplicationResponse }>(url);
+      // 로그인된 사용자의 userId 가져오기
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      if (!user || !user.userId) {
+        throw new Error('로그인이 필요합니다.');
+      }
+
+      // GET 요청에 body로 userId 전송
+      const response = await apiService.get<{ data: ApplicationResponse }>('/authors/application-status', {
+        baseURL: this.authorApiUrl,
+        data: { userId: user.userId }
+      });
       return response.data;
     } catch (error: any) {
       // 404인 경우 신청 내역이 없는 것으로 처리
@@ -55,20 +64,6 @@ class AuthorService {
         return null;
       }
       throw new Error(error.message || '상태 확인 중 오류가 발생했습니다.');
-    }
-  }
-
-  /**
-   * 작가 신청 수정 API
-   * @param data 수정할 데이터
-   * @returns API 응답
-   */
-  async updateApplication(data: Partial<AuthorApplicationData>): Promise<ApplicationResponse> {
-    try {
-      const response = await authorApiService.patch<{ data: ApplicationResponse }>('/authors/application', data);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(error.message || '신청 수정 중 오류가 발생했습니다.');
     }
   }
 }
