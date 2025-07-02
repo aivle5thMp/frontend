@@ -1,0 +1,239 @@
+.author-manage-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #eee;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.refresh-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+  background: #0056b3;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+}
+
+.loading-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-banner {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-banner button {
+  background: none;
+  border: none;
+  color: #721c24;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.application-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.application-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.application-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.applicant-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.applicant-info .user-id {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.application-content {
+  margin-bottom: 1rem;
+}
+
+.bio-section, .portfolio-section {
+  margin-bottom: 1rem;
+}
+
+.bio-section label, .portfolio-section label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.bio-section p {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+.portfolio-link {
+  color: #007bff;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.portfolio-link:hover {
+  text-decoration: underline;
+}
+
+.application-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.approve-button, .reject-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 70px;
+}
+
+.approve-button {
+  background: #28a745;
+  color: white;
+}
+
+.approve-button:hover:not(:disabled) {
+  background: #218838;
+}
+
+.reject-button {
+  background: #dc3545;
+  color: white;
+}
+
+.reject-button:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.approve-button:disabled, .reject-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .author-manage-page {
+    padding: 1rem;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .application-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .application-footer {
+    justify-content: flex-start;
+  }
+  
+  .action-buttons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+} 

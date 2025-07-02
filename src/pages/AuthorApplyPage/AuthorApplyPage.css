@@ -162,6 +162,10 @@
   border-left: 4px solid #f6ad55;
 }
 
+.status-message.approved {
+  border-left: 4px solid #68d391;
+}
+
 .status-message.rejected {
   border-left: 4px solid #fc8181;
 }
@@ -182,6 +186,62 @@
 .reapply-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.refresh-button {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.refresh-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(72, 187, 120, 0.3);
+}
+
+.status-details {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.status-details h3 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+}
+
+.application-info {
+  background: #f7fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+}
+
+.application-info p {
+  margin: 8px 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.application-info strong {
+  color: #2d3748;
+}
+
+.rejection-date {
+  color: #e53e3e !important;
+  font-size: 0.85rem !important;
+  font-style: italic;
+  margin-top: 10px !important;
 }
 
 .form-note {

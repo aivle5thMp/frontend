@@ -20,15 +20,21 @@ const AuthorApplyPage: React.FC = () => {
   const [formData, setFormData] = useState<AuthorApplicationData>({
     name: '',
     bio: '',
-    portfolio_url: ''
+    portfolioUrl: ''
   });
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  // 비로그인 또는 이미 작가인 경우 리다이렉트
+  // 비로그인인 경우 리다이렉트
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
   }
 
+  // ADMIN인 경우 작가 관리 페이지로 리다이렉트
+  if (user?.role === 'ADMIN') {
+    return <Navigate to="/admin/author-management" replace />;
+  }
+
+  // 이미 작가인 경우 리다이렉트
   if (user?.role !== 'USER') {
     return <Navigate to="/" replace />;
   }
@@ -78,6 +84,31 @@ const AuthorApplyPage: React.FC = () => {
           <h2>작가 신청이 검토 중입니다</h2>
           <p>관리자가 신청 내용을 검토하고 있습니다.</p>
           <p className="status-note">* 승인까지 최대 3일이 소요될 수 있습니다.</p>
+          <div className="status-details">
+            <h3>신청 정보</h3>
+            <div className="application-info">
+              <p><strong>이름:</strong> {applicationStatus.name || '정보 없음'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (applicationStatus?.status === 'APPROVED') {
+    return (
+      <div className="author-apply-page">
+        <div className="status-message approved">
+          <div className="status-icon">🎉</div>
+          <h2>축하합니다! 작가 신청이 승인되었습니다</h2>
+          <p>이제 작가로서 활동하실 수 있습니다.</p>
+          <p className="status-note">* 페이지를 새로고침하면 작가 권한이 적용됩니다.</p>
+          <button 
+            className="refresh-button"
+            onClick={() => window.location.reload()}
+          >
+            페이지 새로고침
+          </button>
         </div>
       </div>
     );
@@ -90,6 +121,9 @@ const AuthorApplyPage: React.FC = () => {
           <div className="status-icon">❌</div>
           <h2>작가 신청이 거절되었습니다</h2>
           <p>{applicationStatus.message || '신청 내용을 수정하여 다시 시도해주세요.'}</p>
+          {applicationStatus.rejectedAt && (
+            <p className="rejection-date">거절일: {new Date(applicationStatus.rejectedAt).toLocaleDateString()}</p>
+          )}
           <button 
             className="reapply-button"
             onClick={handleReapply}
@@ -149,12 +183,12 @@ const AuthorApplyPage: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="portfolio_url">포트폴리오 URL</label>
+            <label htmlFor="portfolioUrl">포트폴리오 URL</label>
             <input
               type="url"
-              id="portfolio_url"
-              name="portfolio_url"
-              value={formData.portfolio_url}
+              id="portfolioUrl"
+              name="portfolioUrl"
+              value={formData.portfolioUrl}
               onChange={handleChange}
               placeholder="작품을 확인할 수 있는 URL을 입력해주세요"
               required

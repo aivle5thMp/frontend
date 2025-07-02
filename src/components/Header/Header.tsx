@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { notificationService } from '../../services/notificationService';
+import type { Notification } from '../../types/notification';
 import './Header.css';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
 
   const toggleMobileMenu = () => {
@@ -24,12 +30,82 @@ const Header: React.FC = () => {
     setIsUserDropdownOpen(false);
   };
 
+  const toggleNotificationDropdown = () => {
+    setIsNotificationDropdownOpen(!isNotificationDropdownOpen);
+    if (!isNotificationDropdownOpen && user) {
+      loadNotifications();
+    }
+  };
+
+  const closeNotificationDropdown = () => {
+    setIsNotificationDropdownOpen(false);
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
       closeUserDropdown();
     } catch (error) {
       console.error('Logout failed:', error);
+    }
+  };
+
+  // 알림 목록 로드
+  const loadNotifications = async () => {
+    if (!user) return;
+    
+    try {
+      setIsLoadingNotifications(true);
+      const notifications = await notificationService.getNotifications(user.userId);
+      setNotifications(notifications);
+    } catch (error) {
+      console.error('Failed to load notifications:', error);
+    } finally {
+      setIsLoadingNotifications(false);
+    }
+  };
+
+  // 안읽은 알림 개수 로드
+  const loadUnreadCount = async () => {
+    if (!user) return;
+    
+    try {
+      const response = await notificationService.getUnreadCount(user.userId);
+      setUnreadCount(response.count);
+    } catch (error) {
+      console.error('Failed to load unread count:', error);
+    }
+  };
+
+  // 특정 알림을 읽음으로 표시
+  const markAsRead = async (notificationId: string) => {
+    try {
+      await notificationService.markAsRead(notificationId);
+      setNotifications(prev => 
+        prev.map(notification => 
+          notification.notificationId === notificationId 
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
+
+  // 모든 알림을 읽음으로 표시
+  const markAllAsRead = async () => {
+    if (!user) return;
+    
+    try {
+      await notificationService.markAllAsRead(user.userId);
+      setNotifications(prev => 
+        prev.map(notification => ({ ...notification, isRead: true }))
+      );
+      setUnreadCount(0);
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error);
     }
   };
 
@@ -52,16 +128,31 @@ const Header: React.FC = () => {
       if (!target.closest('.user-menu-container')) {
         closeUserDropdown();
       }
+      if (!target.closest('.notification-container')) {
+        closeNotificationDropdown();
+      }
     };
 
-    if (isUserDropdownOpen) {
+    if (isUserDropdownOpen || isNotificationDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isUserDropdownOpen]);
+  }, [isUserDropdownOpen, isNotificationDropdownOpen]);
+
+  // 안읽은 알림 개수 주기적으로 가져오기
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      loadUnreadCount();
+      
+      // 30초마다 안읽은 알림 개수 갱신
+      const interval = setInterval(loadUnreadCount, 30000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, user]);
 
   // 메뉴 오버레이 클릭 시 닫기
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -111,9 +202,9 @@ const Header: React.FC = () => {
         );
       case 'ADMIN':
         return (
-          <Link to="/author-approval" className="dropdown-item" onClick={closeUserDropdown}>
+          <Link to="/admin/author-management" className="dropdown-item" onClick={closeUserDropdown}>
             <span className="item-icon">⚖️</span>
-            작가등록 심사
+            작가신청 관리
           </Link>
         );
       default:
@@ -162,7 +253,7 @@ const Header: React.FC = () => {
         );
       case 'ADMIN':
         return (
-          <Link to="/author-approval" className="mobile-user-item" onClick={closeMobileMenu}>
+          <Link to="/admin/author-management" className="mobile-user-item" onClick={closeMobileMenu}>
             <span className="item-icon">⚖️</span>
             작가등록 심사
           </Link>
@@ -216,8 +307,9 @@ const Header: React.FC = () => {
           
           <div className="auth-section">
             {isAuthenticated && user ? (
-              /* 로그인된 사용자 드롭다운 */
-              <div className="user-menu-container">
+              <>
+                {/* 로그인된 사용자 드롭다운 */}
+                <div className="user-menu-container">
                 <button 
                   className="user-avatar-btn"
                   onClick={toggleUserDropdown}
@@ -261,6 +353,63 @@ const Header: React.FC = () => {
                   </div>
                 )}
               </div>
+              
+              {/* 알림 아이콘 (유저 프로필 오른쪽) */}
+              <div className="notification-container">
+                <button 
+                  className="notification-btn"
+                  onClick={toggleNotificationDropdown}
+                  aria-label="알림"
+                >
+                  <span className="notification-icon">🔔</span>
+                  {unreadCount > 0 && (
+                    <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+                  )}
+                </button>
+
+                {isNotificationDropdownOpen && (
+                  <div className="notification-dropdown">
+                    <div className="notification-header">
+                      <h3>알림</h3>
+                      {notifications.some(n => !n.isRead) && (
+                        <button className="mark-all-read-btn" onClick={markAllAsRead}>
+                          모두 읽음
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div className="notification-list">
+                      {isLoadingNotifications ? (
+                        <div className="loading-notifications">로딩 중...</div>
+                      ) : notifications.length === 0 ? (
+                        <div className="no-notifications">새로운 알림이 없습니다</div>
+                      ) : (
+                        notifications.map((notification) => (
+                          <div
+                            key={notification.notificationId}
+                            className={`notification-item ${!notification.isRead ? 'unread' : ''}`}
+                            onClick={() => !notification.isRead && markAsRead(notification.notificationId)}
+                          >
+                            <div className="notification-message">
+                              {notification.message}
+                            </div>
+                            <div className="notification-time">
+                              {new Date(notification.createdAt).toLocaleDateString('ko-KR', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </div>
+                            {!notification.isRead && <div className="unread-indicator"></div>}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              </>
             ) : (
               /* 로그인하지 않은 사용자 */
               <div className="auth-buttons">
@@ -327,6 +476,12 @@ const Header: React.FC = () => {
                     <div className="mobile-user-details">
                       <div className="mobile-user-name">{user.name}</div>
                       <div className="mobile-user-email">{user.email}</div>
+                    </div>
+                    <div className="mobile-notification-icon">
+                      <span className="notification-icon">🔔</span>
+                      {unreadCount > 0 && (
+                        <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+                      )}
                     </div>
                   </div>
                   
