@@ -1,0 +1,144 @@
+/* 마크다운 편집기 스타일링 */
+.markdown-editor-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.markdown-editor-wrapper:focus-within {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.markdown-editor-wrapper .w-md-editor {
+  background: white !important;
+}
+
+/* 전체 에디터 배경 강제 설정 */
+.markdown-editor-wrapper .w-md-editor,
+.markdown-editor-wrapper .w-md-editor-fullscreen,
+.markdown-editor-wrapper [data-color-mode] .w-md-editor,
+.markdown-editor-wrapper [data-color-mode="light"] .w-md-editor,
+.markdown-editor-wrapper [data-color-mode="dark"] .w-md-editor {
+  background: white !important;
+  background-color: white !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-text-container {
+  background: white !important;
+  min-height: 800px;
+}
+
+.markdown-editor-wrapper .w-md-editor-text-area {
+  background: white !important;
+  color: #1e293b !important;
+  min-height: 700px;
+}
+
+.markdown-editor-wrapper .w-md-editor-text {
+  min-height: 100% !important;
+}
+
+/* 텍스트 입력 영역 스타일 - line-height 조정 */
+.markdown-editor-wrapper .w-md-editor-text-pre, 
+.markdown-editor-wrapper .w-md-editor-text-input, 
+.markdown-editor-wrapper .w-md-editor-text,
+.markdown-editor-wrapper .w-md-editor-text-area,
+.markdown-editor-wrapper .w-md-editor-text-area textarea {
+  font-size: 1.1rem !important;
+  line-height: 1.5 !important; /* 1.8에서 1.5로 감소 */
+  font-family: inherit !important;
+  color: #1e293b !important;
+}
+
+/* 입력 텍스트 색상 - 중복 제거 및 간소화 */
+.markdown-editor-wrapper .w-md-editor-text-container textarea,
+.markdown-editor-wrapper .w-md-editor-text-input {
+  color: #1e293b !important;
+  background: transparent !important;
+  -webkit-text-fill-color: #1e293b !important;
+  caret-color: #1e293b !important;
+}
+
+/* 플레이스홀더 텍스트 스타일 */
+.markdown-editor-wrapper textarea::placeholder {
+  color: #64748b;
+  opacity: 0.7;
+}
+
+/* syntax highlighting 레이어 숨김 - 중복 텍스트 방지 */
+.markdown-editor-wrapper .w-md-editor-text-pre {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* 입력 영역만 보이도록 설정 */
+.markdown-editor-wrapper .w-md-editor-text-input,
+.markdown-editor-wrapper .w-md-editor-text-area textarea {
+  background: transparent !important;
+  opacity: 1 !important;
+}
+
+/* 툴바 스타일링 */
+.markdown-editor-wrapper .w-md-editor-toolbar {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar li button {
+  color: #475569;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar li button:hover {
+  background: #e2e8f0;
+}
+
+/* 프리뷰 영역 */
+.markdown-editor-wrapper .w-md-editor-preview {
+  background: white !important;
+  padding: 1.5rem;
+}
+
+/* 미리보기 영역 배경 강제 설정 */
+.markdown-editor-wrapper .w-md-editor-preview-area,
+.markdown-editor-wrapper .w-md-editor-preview-area .w-md-editor-preview,
+.markdown-editor-wrapper .wmde-markdown,
+.markdown-editor-wrapper .w-md-editor-preview .wmde-markdown {
+  background: white !important;
+  background-color: white !important;
+}
+
+/* 미리보기 내용 배경 */
+.markdown-editor-wrapper [data-color-mode] .w-md-editor-preview,
+.markdown-editor-wrapper [data-color-mode="light"] .w-md-editor-preview,
+.markdown-editor-wrapper [data-color-mode="dark"] .w-md-editor-preview {
+  background: white !important;
+  background-color: white !important;
+}
+
+/* 미리보기 영역 텍스트 색상 */
+.markdown-editor-wrapper .w-md-editor-preview,
+.markdown-editor-wrapper .w-md-editor-preview *,
+.markdown-editor-wrapper .wmde-markdown,
+.markdown-editor-wrapper .wmde-markdown * {
+  color: #1e293b;
+}
+
+/* 미리보기 헤딩 색상 */
+.markdown-editor-wrapper .w-md-editor-preview h1,
+.markdown-editor-wrapper .w-md-editor-preview h2,
+.markdown-editor-wrapper .w-md-editor-preview h3,
+.markdown-editor-wrapper .w-md-editor-preview h4,
+.markdown-editor-wrapper .w-md-editor-preview h5,
+.markdown-editor-wrapper .w-md-editor-preview h6 {
+  color: #1e293b;
+}
+
+/* 미리보기 코드 블록 */
+.markdown-editor-wrapper .w-md-editor-preview code,
+.markdown-editor-wrapper .w-md-editor-preview pre {
+  color: #1e293b;
+  background: #f8fafc;
+} 

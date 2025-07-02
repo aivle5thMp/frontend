@@ -56,10 +56,11 @@ const Header: React.FC = () => {
     
     try {
       setIsLoadingNotifications(true);
-      const notifications = await notificationService.getNotifications(user.userId);
-      setNotifications(notifications);
+      const notifications = await notificationService.getNotifications();
+      setNotifications(Array.isArray(notifications) ? notifications : []);
     } catch (error) {
       console.error('Failed to load notifications:', error);
+      setNotifications([]); // 오류 시 빈 배열로 설정
     } finally {
       setIsLoadingNotifications(false);
     }
@@ -70,7 +71,7 @@ const Header: React.FC = () => {
     if (!user) return;
     
     try {
-      const response = await notificationService.getUnreadCount(user.userId);
+      const response = await notificationService.getUnreadCount();
       setUnreadCount(response.count);
     } catch (error) {
       console.error('Failed to load unread count:', error);
@@ -99,7 +100,7 @@ const Header: React.FC = () => {
     if (!user) return;
     
     try {
-      await notificationService.markAllAsRead(user.userId);
+      await notificationService.markAllAsRead();
       setNotifications(prev => 
         prev.map(notification => ({ ...notification, isRead: true }))
       );
@@ -371,7 +372,7 @@ const Header: React.FC = () => {
                   <div className="notification-dropdown">
                     <div className="notification-header">
                       <h3>알림</h3>
-                      {notifications.some(n => !n.isRead) && (
+                      {Array.isArray(notifications) && notifications.some(n => !n.isRead) && (
                         <button className="mark-all-read-btn" onClick={markAllAsRead}>
                           모두 읽음
                         </button>
@@ -381,7 +382,7 @@ const Header: React.FC = () => {
                     <div className="notification-list">
                       {isLoadingNotifications ? (
                         <div className="loading-notifications">로딩 중...</div>
-                      ) : notifications.length === 0 ? (
+                      ) : !Array.isArray(notifications) || notifications.length === 0 ? (
                         <div className="no-notifications">새로운 알림이 없습니다</div>
                       ) : (
                         notifications.map((notification) => (

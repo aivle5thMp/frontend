@@ -4,14 +4,14 @@ import type { Notification, UnreadCountResponse, NotificationIdRequest } from '.
 class NotificationService {
   private readonly baseUrl = 'http://localhost:8088/notifications';
 
-  // 사용자의 모든 알림 조회
-  async getNotifications(userId: string): Promise<Notification[]> {
-    return apiService.get<Notification[]>(`${this.baseUrl}?userId=${userId}`);
+  // 알림 조회는 authorization 헤더에서 확인할 것임
+  async getNotifications(): Promise<Notification[]> {
+    return apiService.get<Notification[]>(`${this.baseUrl}`);
   }
 
   // 안읽은 알림 개수 조회
-  async getUnreadCount(userId: string): Promise<UnreadCountResponse> {
-    return apiService.get<UnreadCountResponse>(`${this.baseUrl}/unread-count?userId=${userId}`);
+  async getUnreadCount(): Promise<UnreadCountResponse> {
+    return apiService.get<UnreadCountResponse>(`${this.baseUrl}/unread-count`);
   }
 
   // 특정 알림을 읽음으로 표시
@@ -21,9 +21,8 @@ class NotificationService {
   }
 
   // 모든 알림을 읽음으로 표시
-  async markAllAsRead(userId: string): Promise<void> {
-    const request = { userId };
-    return apiService.patch<void>(`${this.baseUrl}/read-all`, request);
+  async markAllAsRead(): Promise<void> {
+    return apiService.patch<void>(`${this.baseUrl}/read-all`);
   }
 }
 

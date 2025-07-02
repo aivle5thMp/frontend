@@ -1,19 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { purchaseService } from '../../services/purchaseService';
 import './PlusPage.css';
 
 const PlusPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubscribe = () => {
-    if (!isAuthenticated) {
+  const handleSubscribe = async () => {
+    if (!isAuthenticated || !user) {
       navigate('/auth');
       return;
     }
-    // TODO: 구독 결제 처리
-    console.log('구독 신청 처리');
+
+    setIsLoading(true);
+    try {
+      const response = await purchaseService.purchaseSubscription(
+        9900 // 월 구독료
+      );
+
+      if (response.status === 'APPROVED' || response.status === 'SUCCESS' || response.status === 'COMPLETED') {
+        alert('구독이 완료되었습니다!\n이제 모든 프리미엄 기능을 이용하실 수 있습니다.');
+        // 페이지 새로고침으로 구독 상태 업데이트
+        window.location.reload();
+      } else {
+        alert('구독 결제에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('Subscription failed:', error);
+      alert(error.message || '구독 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const features = [
@@ -86,8 +106,12 @@ const PlusPage: React.FC = () => {
               ))}
             </div>
 
-            <button className="subscribe-button" onClick={handleSubscribe}>
-              구독 시작하기
+            <button 
+              className="subscribe-button" 
+              onClick={handleSubscribe}
+              disabled={isLoading}
+            >
+              {isLoading ? '구독 처리 중...' : '구독 시작하기'}
             </button>
 
             <p className="plan-note">

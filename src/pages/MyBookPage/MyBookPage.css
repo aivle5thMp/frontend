@@ -1,0 +1,155 @@
+.my-book-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 2rem 0;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.category-tab {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e9ecef;
+  background-color: white;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.category-tab:hover {
+  border-color: #3498db;
+  color: #3498db;
+  transform: translateY(-1px);
+}
+
+.category-tab.active {
+  background-color: #3498db;
+  border-color: #3498db;
+  color: white;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+  place-items: center;
+}
+
+.book-grid-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 220px;
+}
+
+.book-grid-item .book-card {
+  width: 100%;
+  height: auto;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  margin: 0;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  border: 2px dashed #e9ecef;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .my-book-page {
+    padding: 1rem 0;
+  }
+  
+  .page-container {
+    padding: 0 0.5rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .category-tabs {
+    gap: 0.25rem;
+    padding: 0;
+  }
+  
+  .category-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.8rem;
+  }
+  
+  .book-grid-item {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .category-tab {
+    flex-shrink: 0;
+  }
+  
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.6rem;
+  }
+  
+  .book-grid-item {
+    max-width: 150px;
+  }
+} 

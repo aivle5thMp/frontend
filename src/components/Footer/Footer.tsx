@@ -18,7 +18,6 @@ const Footer: React.FC = () => {
             <ul className="footer-links">
               <li><a href="#" className="footer-link">전자책</a></li>
               <li><a href="#" className="footer-link">플러스</a></li>
-              <li><a href="#" className="footer-link">구독</a></li>
             </ul>
           </div>
           
