@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { purchaseService } from '../../services/purchaseService';
@@ -11,6 +11,21 @@ const PointsPurchasePage: React.FC = () => {
   const [userPoints, setUserPoints] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchPointBalance = async () => {
+      if (isAuthenticated && user) {
+        try {
+          const pointBalance = await purchaseService.getPointBalance();
+          setUserPoints(pointBalance.totalPoint);
+        } catch (error) {
+          console.error('Failed to fetch point balance:', error);
+        }
+      }
+    };
+
+    fetchPointBalance();
+  }, [isAuthenticated, user]);
+
   const handlePurchase = async (pointsPackage: PointsPackage) => {
     if (!isAuthenticated || !user) {
       navigate('/auth');
@@ -20,7 +35,7 @@ const PointsPurchasePage: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await purchaseService.purchasePoints(
-        pointsPackage.finalPrice,
+        pointsPackage.originalPrice, // 할인 패키지 enum은 이후 구현, 패키지 미정
         pointsPackage.points
       );
       

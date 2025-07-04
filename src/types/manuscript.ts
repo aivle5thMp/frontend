@@ -12,6 +12,7 @@ export interface Manuscript {
 export enum ManuscriptStatus {
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
   PUBLISHED = 'PUBLISHED',
   REJECTED = 'REJECTED'
 }

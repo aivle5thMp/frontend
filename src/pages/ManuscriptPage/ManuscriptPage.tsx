@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { manuscriptService } from '../../services/manuscriptService';
 import type { Manuscript } from '../../types/manuscript';
 import { ManuscriptStatus } from '../../types/manuscript';
@@ -14,9 +14,11 @@ export const ManuscriptPage: React.FC = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ManuscriptStatus | ''>('');
   const [searchPending, setSearchPending] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   const { user } = useAuth();
+  const location = useLocation();
 
   // 검색어 debounce 처리
   useEffect(() => {
@@ -47,6 +49,22 @@ export const ManuscriptPage: React.FC = () => {
     loadManuscripts();
   }, [user?.userId, debouncedSearchTerm, statusFilter]);
 
+  // 성공 메시지 처리
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // URL state 초기화
+      window.history.replaceState({}, document.title);
+      
+      // 5초 후 메시지 자동 제거
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
+
   const loadManuscripts = async () => {
     try {
       setLoading(true);
@@ -73,6 +91,8 @@ export const ManuscriptPage: React.FC = () => {
         return 'status-draft';
       case ManuscriptStatus.SUBMITTED:
         return 'status-submitted';
+      case ManuscriptStatus.UNDER_REVIEW:
+        return 'status-under-review';
       case ManuscriptStatus.PUBLISHED:
         return 'status-published';
       case ManuscriptStatus.REJECTED:
@@ -87,7 +107,9 @@ export const ManuscriptPage: React.FC = () => {
       case ManuscriptStatus.DRAFT:
         return '초안';
       case ManuscriptStatus.SUBMITTED:
-        return '출간 신청됨';
+        return '제출됨';
+      case ManuscriptStatus.UNDER_REVIEW:
+        return '검토중';
       case ManuscriptStatus.PUBLISHED:
         return '출간됨';
       case ManuscriptStatus.REJECTED:
@@ -149,7 +171,8 @@ export const ManuscriptPage: React.FC = () => {
             >
               <option value="">모든 상태</option>
               <option value={ManuscriptStatus.DRAFT}>초안</option>
-              <option value={ManuscriptStatus.SUBMITTED}>출간 신청됨</option>
+              <option value={ManuscriptStatus.SUBMITTED}>제출됨</option>
+              <option value={ManuscriptStatus.UNDER_REVIEW}>검토중</option>
               <option value={ManuscriptStatus.PUBLISHED}>출간됨</option>
               <option value={ManuscriptStatus.REJECTED}>반려됨</option>
             </select>
@@ -159,6 +182,12 @@ export const ManuscriptPage: React.FC = () => {
         {loading && <div className="loading">로딩 중...</div>}
         
         {error && <div className="error-message">{error}</div>}
+        
+        {successMessage && (
+          <div className="success-message">
+            {successMessage}
+          </div>
+        )}
 
         {!loading && manuscripts.length === 0 && (
           <div className="empty-state">
@@ -193,23 +222,21 @@ export const ManuscriptPage: React.FC = () => {
                 </div>
                 
                 <div className="card-footer">
-                  <div className="card-actions">
-                    {manuscript.status === ManuscriptStatus.DRAFT && (
-                      <Link 
-                        to={`/manuscripts/${manuscript.id}/edit`}
-                        className="btn btn-outline btn-sm"
-                      >
-                        수정
-                      </Link>
-                    )}
-                    
+                  {manuscript.status === ManuscriptStatus.DRAFT && (
                     <Link 
-                      to={`/manuscripts/${manuscript.id}`}
-                      className="btn btn-secondary btn-sm"
+                      to={`/manuscripts/${manuscript.id}/edit`}
+                      className="btn btn-outline btn-xs"
                     >
-                      상세보기
+                      수정
                     </Link>
-                  </div>
+                  )}
+                  
+                  <Link 
+                    to={`/manuscripts/${manuscript.id}`}
+                    className="btn btn-secondary btn-xs"
+                  >
+                    상세보기
+                  </Link>
                 </div>
               </div>
             ))}

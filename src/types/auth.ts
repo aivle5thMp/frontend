@@ -22,6 +22,7 @@ export interface AuthTokens {
   accessToken: string;
   tokenType: string;
   expiresIn: number;
+  refreshToken?: string;
 }
 
 export interface LoginResponse {

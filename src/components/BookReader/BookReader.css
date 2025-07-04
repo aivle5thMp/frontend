@@ -1,0 +1,115 @@
+.book-reader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.book-reader-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.reader-close {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.reader-close:hover {
+  color: #000;
+}
+
+.reader-title {
+  flex: 1;
+}
+
+.reader-title h1 {
+  font-size: 1.75rem;
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.reader-author {
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.reader-audio {
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.audio-player {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: block;
+}
+
+.reader-content {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.reader-content p {
+  margin: 1.5rem 0;
+  color: #333;
+  font-size: 1.125rem;
+}
+
+/* 데스크톱에서의 최대 너비 제한 */
+@media (min-width: 1024px) {
+  .book-reader {
+    padding: 0 2rem;
+  }
+  
+  .book-reader-header {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .book-reader-header {
+    padding: 1rem;
+  }
+
+  .reader-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .reader-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .reader-content p {
+    font-size: 1rem;
+  }
+} 

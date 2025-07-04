@@ -1,8 +1,9 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import type { ApiError } from '../types/auth';
 
-// API 기본 설정
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'; // 테스트용: 'http://your-test-server:8080'
+// API 기본 설정 - 게이트웨이 통합
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8089';
+// const API_BASE_URL = 'http://20.249.116.22:8089';
 
 class ApiService {
   private axiosInstance: AxiosInstance;
@@ -26,6 +27,7 @@ class ApiService {
 
   private setupInterceptors() {
     // 요청 인터셉터 - 토큰 자동 추가
+    console.log('API_BASE_URL', API_BASE_URL);
     this.axiosInstance.interceptors.request.use(
       (config) => {
         const token = this.getAccessToken();
@@ -135,13 +137,19 @@ class ApiService {
 
   private logout(): void {
     this.clearTokens();
-    window.location.href = '/login';
+    window.location.href = '/auth';
   }
 
   // 공통 API 메서드들
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.axiosInstance.get(url, config);
-    return response.data;
+
+    try {
+      const response = await this.axiosInstance.get(url, config);
+      return response.data;
+    } catch (error) {
+      console.error(`[API] GET 요청 실패 - ${url}:`, error);
+      throw error;
+    }
   }
 
   public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {

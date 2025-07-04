@@ -1,8 +1,10 @@
 import apiService from './api';
 import type { User, LoginCredentials, RegisterCredentials, LoginResponse, AuthTokens } from '../types/auth';
 
+
 class AuthService {
   private readonly USER_KEY = 'user';
+
 
   /**
    * 회원가입
@@ -22,9 +24,11 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await apiService.post<LoginResponse>('/auth/login', credentials);
-      this.setAuthData(response.user, response.auth);
-      return response;
+      const response = await apiService.post<{data: LoginResponse}>('/auth/login', credentials);
+      const loginData = response.data || response;
+      console.log('Login response:', loginData); // 로그인 응답 확인
+      this.setAuthData(loginData.user, loginData.auth);
+      return loginData;
     } catch (error: any) {
       const errorMessage = error.message || '로그인에 실패했습니다.';
       throw new Error(errorMessage);
@@ -46,9 +50,10 @@ class AuthService {
     if (!token) return null;
 
     try {
-      const response = await apiService.get<User>('/auth/me');
-      this.setUser(response);
-      return response;
+      const response = await apiService.get<{data: User}>('/auth/me');
+      const user = response.data || response;
+      this.setUser(user);
+      return user;
     } catch (error) {
       console.error('Failed to get current user:', error);
       this.clearAuthData();
@@ -62,7 +67,8 @@ class AuthService {
    * 인증 데이터 저장
    */
   private setAuthData(user: User, auth: AuthTokens): void {
-    apiService.setTokens(auth.accessToken, ''); // refreshToken은 현재 AuthTokens에 없으므로 빈 문자열
+    console.log('Setting auth data:', { user, auth }); // 저장할 인증 데이터 확인
+    apiService.setTokens(auth.accessToken, auth.refreshToken || '');
     this.setUser(user);
   }
 

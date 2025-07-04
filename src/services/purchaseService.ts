@@ -1,38 +1,72 @@
-import apiService from './api';
-import type { PurchaseRequest, PurchaseResponse } from '../types/purchase';
+import { apiService } from './api';
+import type { PurchaseRequest, PurchaseResponse, PointBalanceDTO } from '../types/purchase';
+import type { AuthTokens, User } from '../types/auth';
+
+interface PointBalanceResponse {
+  data: PointBalanceDTO;
+}
 
 class PurchaseService {
-  private readonly baseUrl = 'http://localhost:8086/payments';
+  private readonly USER_KEY = 'user';
+
+  /**
+   * JWT 토큰에서 페이로드 디코드
+   */
+  private decodeToken(token: string): any {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3 || !parts[1]) {
+        throw new Error('Invalid token format');
+      }
+      const base64Payload = parts[1];
+      const payload = atob(base64Payload);
+      const decodedPayload = JSON.parse(payload);
+      console.log('Token payload:', decodedPayload);
+      return decodedPayload;
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 유저 정보 업데이트
+   */
+  private updateUserInfo(accessToken: string): void {
+    const payload = this.decodeToken(accessToken);
+    if (payload) {
+      console.log('Creating user object with payload fields:', {
+        sub: payload.sub,
+        role: payload.role,
+        is_subscribed: payload.is_subscribed
+      });
+      
+      // 기존 유저 정보 가져오기
+      const existingUserStr = localStorage.getItem(this.USER_KEY);
+      const existingUser = existingUserStr ? JSON.parse(existingUserStr) : null;
+      
+      // 새로운 유저 정보 (기존 정보 유지하고 구독 상태만 업데이트)
+      const user: User = {
+        userId: payload.sub,
+        email: existingUser?.email,
+        name: existingUser?.name,
+        role: payload.role,
+        isSubscribed: payload.is_subscribed
+      };
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+      console.log('Updated user info:', user);
+    }
+  }
 
   /**
    * 구매 요청 (포인트 또는 구독)
    */
   async purchase(request: PurchaseRequest): Promise<PurchaseResponse> {
     try {
-      const response = await fetch(this.baseUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        },
-        body: JSON.stringify(request)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const response = await apiService.post<{data: PurchaseResponse}>('/payments', request);
+      return response.data || response;
     } catch (error: any) {
       console.error('Purchase failed:', error);
-      
-      // 네트워크 에러인지 확인
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.');
-      }
-      
       throw new Error(error.message || '구매에 실패했습니다.');
     }
   }
@@ -56,9 +90,31 @@ class PurchaseService {
     const request: PurchaseRequest = {
       item: 'subscription',
       amount,
-      point: 0 // 구독은 포인트가 없으므로 0
+      point: 0
     };
-    return this.purchase(request);
+    
+    const response = await this.purchase(request);
+    
+    // 구독 구매 성공 시 새로운 토큰 발급
+    if (response) {
+      try {
+        const currentToken = localStorage.getItem('accessToken');
+        if (currentToken) {
+          const authResponse = await apiService.post<{auth: AuthTokens}>('/auth/refresh', {
+            token: currentToken
+          });
+          
+          if (authResponse.auth?.accessToken) {
+            apiService.setTokens(authResponse.auth.accessToken, '');
+            this.updateUserInfo(authResponse.auth.accessToken);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to get new token after subscription:', error);
+      }
+    }
+    
+    return response;
   }
 
   /**
@@ -66,22 +122,27 @@ class PurchaseService {
    */
   async getPurchaseHistory(): Promise<any[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/history`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const data = await apiService.get<{data: any[]}>('/payments/history');
+      return data.data || data;
     } catch (error: any) {
       console.error('Failed to get purchase history:', error);
       return [];
+    }
+  }
+
+  /**
+   * 포인트 balance 조회
+   */
+  async getPointBalance(): Promise<PointBalanceDTO> {
+    try {
+      const response = await apiService.get<PointBalanceResponse>('/points/balance');
+      if (!response || !response.data) {
+        throw new Error('포인트 정보를 불러올 수 없습니다.');
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to get point balance:', error);
+      throw error;
     }
   }
 }

@@ -15,6 +15,7 @@ import CreateManuscriptPage from './pages/CreateManuscriptPage/CreateManuscriptP
 import ManuscriptDetailPage from './pages/ManuscriptDetailPage/ManuscriptDetailPage';
 import EditManuscriptPage from './pages/EditManuscriptPage/EditManuscriptPage';
 import PointsPurchasePage from './pages/PointsPurchasePage/PointsPurchasePage';
+import BookReaderPage from './pages/BookReaderPage/BookReaderPage';
 
 import './App.css';
 
@@ -35,6 +36,7 @@ function App() {
               <Route path="/author-apply" element={<AuthorApplyPage />} />
               <Route path="/admin/author-management" element={<AuthorManagePage />} />
               <Route path="/my-books" element={<MyBookPage />} />
+              <Route path="/read/:bookId" element={<BookReaderPage />} />
               
               {/* 원고 관리 라우트들 */}
               <Route path="/manuscripts" element={<ManuscriptPage />} />

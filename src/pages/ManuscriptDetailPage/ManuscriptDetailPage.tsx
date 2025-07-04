@@ -77,24 +77,59 @@ export const ManuscriptDetailPage: React.FC = () => {
     try {
       setActionLoading('publish');
       console.log('Publishing manuscript with ID:', manuscript.id);
-      await manuscriptService.publishManuscript(manuscript.id);
+      const response = await manuscriptService.publishManuscript(manuscript.id);
       
-      // 상태 업데이트
-      setManuscript({
-        ...manuscript,
-        status: ManuscriptStatus.SUBMITTED
+      // 백엔드 응답 메시지와 함께 목록으로 이동
+      navigate('/manuscripts', { 
+        state: { 
+          message: response.message || '출간 검토가 시작되었습니다. 처리 완료까지 시간이 소요될 수 있습니다.',
+          success: true
+        }
       });
-      
-      setShowPublishConfirm(false);
     } catch (err: any) {
       console.error('Error publishing manuscript:', err);
       setError(err.message || '출간 신청에 실패했습니다.');
     } finally {
       setActionLoading(null);
+      setShowPublishConfirm(false);
     }
   };
 
 
+
+  const getStatusColor = (status: ManuscriptStatus) => {
+    switch (status) {
+      case ManuscriptStatus.DRAFT:
+        return 'status-draft';
+      case ManuscriptStatus.SUBMITTED:
+        return 'status-submitted';
+      case ManuscriptStatus.UNDER_REVIEW:
+        return 'status-under-review';
+      case ManuscriptStatus.PUBLISHED:
+        return 'status-published';
+      case ManuscriptStatus.REJECTED:
+        return 'status-rejected';
+      default:
+        return '';
+    }
+  };
+
+  const getStatusText = (status: ManuscriptStatus) => {
+    switch (status) {
+      case ManuscriptStatus.DRAFT:
+        return '초안';
+      case ManuscriptStatus.SUBMITTED:
+        return '제출됨';
+      case ManuscriptStatus.UNDER_REVIEW:
+        return '검토중';
+      case ManuscriptStatus.PUBLISHED:
+        return '출간됨';
+      case ManuscriptStatus.REJECTED:
+        return '반려됨';
+      default:
+        return status;
+    }
+  };
 
   const canEdit = manuscript?.status === ManuscriptStatus.DRAFT;
   const canDelete = manuscript?.status === ManuscriptStatus.DRAFT || manuscript?.status === ManuscriptStatus.REJECTED;
@@ -182,6 +217,9 @@ export const ManuscriptDetailPage: React.FC = () => {
             <span>수정일: {new Date(manuscript.updatedAt).toLocaleDateString()}</span>
           )}
           <span>글자 수: {manuscript.content.length}자</span>
+          <span className={`status-badge ${getStatusColor(manuscript.status)}`}>
+            {getStatusText(manuscript.status)}
+          </span>
         </div>
 
         <div className="manuscript-content">

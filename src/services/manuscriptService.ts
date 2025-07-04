@@ -6,12 +6,9 @@ import type {
 
 export class ManuscriptService {
 
-  // baseurl
-  private readonly baseUrl = 'http://localhost:8082/manuscripts';
-
   // 1. 내 원고 목록 조회
   async getMyManuscripts(): Promise<Manuscript[]> {
-    const response = await apiService.get<Manuscript[]>(`${this.baseUrl}/my`);
+    const response = await apiService.get<Manuscript[]>('/manuscripts/my');
     return response;
   }
 
@@ -22,7 +19,7 @@ export class ManuscriptService {
       title: manuscript.title,
       content: manuscript.content
     };
-    const response = await apiService.post<{success: boolean, id: string, message: string}>(`${this.baseUrl}/create`, createReq);
+    const response = await apiService.post<{success: boolean, id: string, message: string}>('/manuscripts/create', createReq);
     return response.id;
   }
 
@@ -30,7 +27,7 @@ export class ManuscriptService {
   async getManuscriptDetail(id: string): Promise<Manuscript | null> {
     try {
       const manuscript = await apiService.get<Manuscript>(
-        `${this.baseUrl}/detail/${id}`
+        `/manuscripts/detail/${id}`
       );
       return manuscript;
     } catch (error: any) {
@@ -49,17 +46,20 @@ export class ManuscriptService {
       title: manuscript.title,
       content: manuscript.content
     };
-    return apiService.put<void>(`${this.baseUrl}/edit`, editReq);
+    return apiService.put<void>('/manuscripts/edit', editReq);
   }
 
   // 5. 원고 삭제
   async deleteManuscript(id: string): Promise<void> {
-    return apiService.delete<void>(`${this.baseUrl}/delete/${id}`);
+    return apiService.delete<void>(`/manuscripts/delete/${id}`);
   }
 
-  // 6. 출간 신청
-  async publishManuscript(id: string): Promise<void> {
-    return apiService.post<void>(`${this.baseUrl}/publish/${id}`);
+  // 6. 출간 신청 (즉시 응답, 30초 타임아웃)
+  async publishManuscript(id: string): Promise<{success: boolean, id: string, message: string}> {
+    const response = await apiService.post<{success: boolean, id: string, message: string}>(`/manuscripts/publish/${id}`, {}, {
+      timeout: 30000 // 30초 타임아웃
+    });
+    return response;
   }
 
   // 추가: 원고 필터링 및 검색
